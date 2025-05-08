@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.services.fe-admin.name }}
+  labels:
+    app: {{ .Values.services.fe-admin.name }}
+spec:
+  replicas: {{ .Values.services.fe-admin.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ .Values.services.fe-admin.name }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.services.fe-admin.name }}
+    spec:
+      containers:
+        - name: {{ .Values.services.fe-admin.name }}
+          image: "{{ .Values.services.fe-admin.image.repository }}:{{ .Values.services.fe-admin.image.tag }}"
+          imagePullPolicy: {{ .Values.services.fe-admin.image.pullPolicy }}
+          ports:
+            - containerPort: {{ .Values.services.fe-admin.containerPort }}
+          # envFrom:
+          #   - configMapRef:
+          #       name: affiliate-envars
+          resources:
+            requests:
+              cpu: {{ .Values.services.fe-admin.resources.requests.cpu }}
+              memory: {{ .Values.services.fe-admin.resources.requests.memory }}
+            limits:
+              cpu: {{ .Values.services.fe-admin.resources.limits.cpu }}
+              memory: {{ .Values.services.fe-admin.resources.limits.memory }}

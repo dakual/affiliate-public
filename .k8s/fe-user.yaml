@@ -1,0 +1,45 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: fe-user
+  labels:
+    app: fe-user
+spec:
+  selector:
+    matchLabels:
+      app: fe-user
+  template:
+    metadata:
+      labels:
+        app: fe-user
+    spec:
+      containers:
+        - name: fe-user
+          image: fe-user
+          ports:
+            - containerPort: 5000
+          envFrom:
+            - configMapRef:
+                name: affiliate-envars
+          resources:
+            requests:
+              cpu: 50m
+              memory: 128Mi
+            limits:
+              cpu: 100m
+              memory: 256Mi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: fe-user
+  labels:
+    app: fe-user
+spec:
+  type: LoadBalancer
+  selector:
+    app: fe-user
+  ports:
+    - name: fe-user
+      port: 5000
+      targetPort: 5000

@@ -1,0 +1,45 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: fe-admin
+  labels:
+    app: fe-admin
+spec:
+  selector:
+    matchLabels:
+      app: fe-admin
+  template:
+    metadata:
+      labels:
+        app: fe-admin
+    spec:
+      containers:
+        - name: fe-admin
+          image: fe-admin
+          ports:
+            - containerPort: 5000
+          envFrom:
+            - configMapRef:
+                name: affiliate-envars
+          resources:
+            requests:
+              cpu: 50m
+              memory: 128Mi
+            limits:
+              cpu: 100m
+              memory: 256Mi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: fe-admin
+  labels:
+    app: fe-admin
+spec:
+  type: LoadBalancer
+  selector:
+    app: fe-admin
+  ports:
+    - name: fe-admin
+      port: 5000
+      targetPort: 5000

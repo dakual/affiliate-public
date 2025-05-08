@@ -1,0 +1,28 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: consumer-email
+  labels:
+    app: consumer-email
+spec:
+  selector:
+    matchLabels:
+      app: consumer-email
+  template:
+    metadata:
+      labels:
+        app: consumer-email
+    spec:
+      containers:
+        - name: consumer-email
+          image: consumer-email
+          envFrom:
+            - configMapRef:
+                name: affiliate-envars
+          resources:
+            requests:
+              cpu: 200m
+              memory: 256Mi
+            limits:
+              cpu: 400m
+              memory: 512Mi

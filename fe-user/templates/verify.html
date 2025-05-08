@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>UserLTE | Verify</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
+  <link rel="stylesheet" href="/plugins/fontawesome-free/css/all.min.css">
+  <link rel="stylesheet" href="/plugins/icheck-bootstrap/icheck-bootstrap.min.css">
+  <link rel="stylesheet" href="/dist/css/adminlte.min.css">
+</head>
+<body class="hold-transition login-page">
+
+  <div class="login-box">
+    
+    <div class="card card-outline card-primary">
+      <div class="card-header text-center">
+        <a href="/" class="h1"><b>User</b>LTE</a>
+      </div>
+      <div class="card-body">
+        <p class="login-box-msg">Great, now verify your email</p>
+
+        <p class="text-center pb-5">
+          <span class="mailbox-attachment-icon has-img"><img src="/dist/img/verify.png"></span>
+        </p>
+        <p class="login-box-msg">Check your inbox at <b>{{emailVerify}}</b> and click the verification link inside to complete your registration. This link will expire shortly, so verify soon! Don't see an email? Check your spam folder.</p>
+        <p class="text-center">[ <a href="{{ url_for('login') }}" class="text-center">Go to login</a> ]</p>
+      </div>
+    </div>
+  </div>
+
+  <script src="/plugins/jquery/jquery.min.js"></script>
+  <script src="/plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
+  <script src="/dist/js/adminlte.min.js"></script>
+</body>
+</html>

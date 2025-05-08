@@ -1,0 +1,58 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: affiliate-envars
+  labels:
+    app: affiliate-envars
+data:
+  ADMIN_URL: http://admin.localhost
+  USER_URL: http://user.localhost
+
+  SECRET_KEY: MFwwDQYJKoZIhvcNAQEBBQADSwAwSAJBALSlDUfngNVzILQh0UDzg22Wd3NCvHrl
+
+  # BACKEND
+  BE_HOST: backend
+  BE_PORT: "5000"
+  BE_VERSION: api
+
+  # RABBITMQ
+  RABBITMQ_DEFAULT_USER: admin
+  RABBITMQ_DEFAULT_PASS: admin
+
+  # MESSAGE QUEUE
+  MQ_HOST: rabbitmq
+  MQ_PORT: "5672"
+  MQ_USER: admin
+  MQ_PASS: admin
+
+  # SMTP
+  SMTP_HOST: email-smtp.eu-central-1.amazonaws.com
+  SMTP_PORT: "587"
+  SMTP_USER: AKIAZGN6RFNEUHM4F27S
+  SMTP_PASS: BPLAr2PNljCA6xkFeqnSN4ucDiK9+XmWztTEi0tvcPQN
+
+  # MySQL
+  MYSQL_HOST: database
+  MYSQL_DATABASE: affiliate
+  MYSQL_USER: affiliate
+  MYSQL_PASSWORD: affiliate
+  MYSQL_ROOT_PASSWORD: affiliate
+
+  # JWT SETTINGS
+  JWT_ISSUER: example.com
+  JWT_LIFETIME: "86400"
+  JWT_PRIVATE_KEY: |
+    -----BEGIN RSA PRIVATE KEY-----
+    MIIBPQIBAAJBALSlDUfngNVzILQh0UDzg22Wd3NCvHrl1PMK+IxRoTQovLN3TQ8E
+    oBgL7GqHTYSrnnADrV0JSgf8onbDzkvZoYcCAwEAAQJBALEY5w5JPZsFRViTlsww
+    b/bt/qk3EgUCcWTcqpMWLA4vBBH7/guLZvyWG1U4Q63vgO1SSA7g+bwMvmDMCj6l
+    fhECIQDc6/A9mYXirCwHL0iKb5o1R/ri4NqZYrcoGUrYhpntZQIhANFT7k4SffT0
+    3PSK1Pa2OcsnfuBMmqZcld3DP8+lCip7AiEAhRaZ9vIaxxBDwdxJTiSneLuxN6aP
+    6mGex0hdX43PA0UCIQDNZjD41LZZjYfeQPg1WZueF5QsnZ5GTaUUpIjRxF0UTwIh
+    AMa/1Gkl/FUaiZaFm6KMysKHAeWg3YZudouHoDLDcDbl
+    -----END RSA PRIVATE KEY-----
+  JWT_PUBLIC_KEY: |
+    -----BEGIN PUBLIC KEY-----
+    MFwwDQYJKoZIhvcNAQEBBQADSwAwSAJBALSlDUfngNVzILQh0UDzg22Wd3NCvHrl
+    1PMK+IxRoTQovLN3TQ8EoBgL7GqHTYSrnnADrV0JSgf8onbDzkvZoYcCAwEAAQ==
+    -----END PUBLIC KEY-----

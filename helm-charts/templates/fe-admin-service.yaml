@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.services.fe-admin.name }}
+  labels:
+    app: {{ .Values.services.fe-admin.name }}
+spec:
+  type: {{ .Values.services.fe-admin.service.type }}
+  selector:
+    app: {{ .Values.services.fe-admin.name }}
+  ports:
+    - name: {{ .Values.services.fe-admin.name }}
+      port: {{ .Values.services.fe-admin.service.port }}
+      targetPort: {{ .Values.services.fe-admin.service.targetPort }}

@@ -1,0 +1,33 @@
+{
+    "name": "affiliate/backend",
+    "version": "1.0.0",
+    "type": "project",
+    "require": {
+        "slim/slim": "^4.14",
+        "slim/psr7": "^1.7",
+        "firebase/php-jwt": "^6.10",
+        "selective/basepath": "^2.2",
+        "monolog/monolog": "^3.6",
+        "php-amqplib/php-amqplib": "^3.6.2"
+    },
+    "autoload": {
+        "psr-4": {
+            "Backend\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Daghan",
+            "email": "daghan.altunsoy@gmail.com"
+        }
+    ],
+	"config": {
+        "process-timeout":0,
+        "platform": {
+            "php": "8.1"
+         }
+	},
+    "scripts": {
+        "start": "php -S 0.0.0.0:5000 -t /app/public/"
+    }
+}

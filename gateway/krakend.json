@@ -1,0 +1,65 @@
+{
+  "$schema": "https://www.krakend.io/schema/v3.json",
+  "version": 3,
+  "endpoints": [
+    {
+      "endpoint": "/api/status",
+      "method": "GET",
+      "output_encoding": "json",
+      "input_headers": [
+        "Authorization",
+        "Content-Length",
+        "Content-Type",
+        "Origin"
+      ],
+      "backend": [
+        {
+          "url_pattern": "/api/status",
+          "host": [
+            "http://backend:5000"
+          ],
+          "extra_config": {
+            "backend/http": {
+              "return_error_code": true
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "output_encoding": "no-op",
+  "extra_config": {
+    "router": {
+      "@comment": "The health endpoint is now under /health instead of /__health",
+      "health_path": "/api/health",
+      "return_error_msg": true
+    },
+    "security/cors": {
+      "allow_origins": [
+        "*"
+      ],
+      "allow_methods": [
+        "GET",
+        "HEAD",
+        "POST",
+        "PATCH",
+        "DELETE",
+        "PUT"
+      ],
+      "expose_headers": [
+        "Content-Length",
+        "Content-Type"
+      ],
+      "allow_headers": [
+        "Accept-Language",
+        "Authorization",
+        "Content-Length",
+        "Content-Type"
+      ],
+      "max_age": "12h",
+      "allow_credentials": false,
+      "debug": false
+    }
+  },
+  "timeout": "5000ms"
+}

@@ -1,0 +1,41 @@
+services:
+  backend:
+    name: backend
+    replicaCount: 1
+    image:
+      pullPolicy: Always
+      repository: kurtay/backend
+      tag: latest
+    containerPort: 5000
+    resources:
+      requests:
+        cpu: 50m
+        memory: 128Mi
+      limits:
+        cpu: 100m
+        memory: 256Mi
+    service:
+      type: LoadBalancer
+      port: 5000
+      targetPort: 5000
+  fe-admin:
+    name: fe-admin
+    replicaCount: 1
+    image:
+      pullPolicy: Always
+      repository: kurtay/fe-admin
+      tag: latest
+    containerPort: 5000
+    resources:
+      requests:
+        cpu: 50m
+        memory: 128Mi
+      limits:
+        cpu: 100m
+        memory: 256Mi
+    service:
+      type: LoadBalancer
+      port: 5000
+      targetPort: 5000
+
+

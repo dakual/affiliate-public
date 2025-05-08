@@ -1,0 +1,84 @@
+name: Build
+
+on:
+  workflow_call:
+    inputs:
+      skip:
+        description: Don't run the specified jobs
+        default: ''
+        required: false
+        type: string
+    outputs:
+      changed:
+        value: ${{ jobs.changes.outputs.changed }}
+      version:
+        value: ${{ jobs.build.outputs.version }}
+
+jobs:
+  changes:
+    runs-on: ubuntu-latest
+    name: Get changed-apps
+    outputs:
+      matrix: ${{ steps.changed-dirs.outputs.all_changed_files }}
+      changed: ${{ steps.changed-dirs.outputs.any_changed }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Get changed files
+        id: changed-dirs
+        uses: tj-actions/changed-files@v46
+        with:
+          matrix: true
+          dir_names: true
+          dir_names_max_depth: 1
+          files: |
+            backend/**
+            consumer-email/**
+            fe-admin/**
+            fe-user/**
+            gateway/**
+
+      - name: List all changed files
+        if: steps.changed-dirs.outputs.any_changed == 'true'
+        env:
+          ALL_CHANGED_FILES: ${{ steps.changed-dirs.outputs.all_changed_files }}
+        run: |
+          for file in ${ALL_CHANGED_FILES}; do
+            echo "$file was changed"
+          done
+
+  build:
+    if: ${{ !cancelled() && needs.changes.outputs.matrix != '[]' }}
+    name: Buid
+    runs-on: ubuntu-latest
+    needs:
+      - changes
+    strategy:
+      matrix: 
+        app: ${{ fromJSON(needs.changes.outputs.matrix) }}
+      fail-fast: false
+    outputs:
+      version: ${{ steps.version.outputs.value }}
+    steps:
+      - name: Check out the repo
+        uses: actions/checkout@v4
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_USER }}
+          password: ${{ secrets.DOCKER_TOKEN }}
+
+      - name: Get version
+        id: version
+        run: echo "value=sha-${GITHUB_SHA::8}" >> "${GITHUB_OUTPUT}"
+
+      - name: Build and push
+        uses: docker/build-push-action@v6
+        with:
+          context: ./
+          file: ./${{ matrix.app }}/Dockerfile
+          push: true
+          tags: |
+            kurtay/${{ matrix.app }}:${{ steps.version.outputs.value }}
+            kurtay/${{ matrix.app }}:latest

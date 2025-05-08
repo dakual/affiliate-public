@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.services.backend.name }}
+  labels:
+    app: {{ .Values.services.backend.name }}
+spec:
+  replicas: {{ .Values.services.backend.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ .Values.services.backend.name }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.services.backend.name }}
+    spec:
+      containers:
+        - name: {{ .Values.services.backend.name }}
+          image: "{{ .Values.services.backend.image.repository }}:{{ .Values.services.backend.image.tag }}"
+          imagePullPolicy: {{ .Values.services.backend.image.pullPolicy }}
+          ports:
+            - containerPort: {{ .Values.services.backend.containerPort }}
+          # envFrom:
+          #   - configMapRef:
+          #       name: affiliate-envars
+          resources:
+            requests:
+              cpu: {{ .Values.services.backend.resources.requests.cpu }}
+              memory: {{ .Values.services.backend.resources.requests.memory }}
+            limits:
+              cpu: {{ .Values.services.backend.resources.limits.cpu }}
+              memory: {{ .Values.services.backend.resources.limits.memory }}

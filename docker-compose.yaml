@@ -1,0 +1,139 @@
+version: '3'
+
+services:
+
+  traefik:
+    image: "traefik:v3.3"
+    container_name: "traefik"
+    command:
+      - "--api.insecure=true"
+      - "--providers.docker=true"
+      - "--providers.docker.exposedbydefault=false"
+      - "--entryPoints.web.address=:80"
+      - "--entrypoints.mysql.address=:3306"
+    ports:
+      - "80:80"
+      - "8080:8080"
+      - "3306:3306"
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock:ro"
+    networks:
+      - affiliate
+
+  backend:
+    container_name: backend
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+    image: backend
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.backend.rule=Host(`api.affiliate.test`)"
+      - "traefik.http.routers.backend.entrypoints=web"
+      - "traefik.http.services.backend.loadbalancer.server.port=5000"
+    volumes:
+      - ./backend:/app
+    env_file:
+      - .env
+    networks:
+      - affiliate
+
+  fe-admin:
+    container_name: fe-admin
+    build:
+      context: .
+      dockerfile: fe-admin/Dockerfile
+    image: fe-admin
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.fe-admin.rule=Host(`admin.affiliate.test`)"
+      - "traefik.http.routers.fe-admin.entrypoints=web"
+      - "traefik.http.services.fe-admin.loadbalancer.server.port=5000"
+    volumes:
+      - ./fe-admin:/app
+    env_file:
+      - .env
+    networks:
+      - affiliate
+
+  fe-user:
+    container_name: fe-user
+    build:
+      context: .
+      dockerfile: fe-user/Dockerfile
+    image: fe-user
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.fe-user.rule=Host(`user.affiliate.test`)"
+      - "traefik.http.routers.fe-user.entrypoints=web"
+      - "traefik.http.services.fe-user.loadbalancer.server.port=5000"
+    volumes:
+      - ./fe-user:/app
+    env_file:
+      - .env
+    networks:
+      - affiliate
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: 'rabbitmq'
+    ports:
+      - 5672:5672
+      - 15672:15672
+    environment:
+      RABBITMQ_DEFAULT_USER: admin
+      RABBITMQ_DEFAULT_PASS: admin
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.rabbitmq.rule=Host(`rabbitmq.affiliate.test`)"
+      - "traefik.http.routers.rabbitmq.entrypoints=web"
+    healthcheck:
+      test: rabbitmq-diagnostics check_port_connectivity
+      interval: 5s
+      timeout: 1s
+      retries: 10
+    networks:
+      - affiliate
+
+  consumer-email:
+    container_name: consumer-email
+    build:
+      context: .
+      dockerfile: consumer-email/Dockerfile
+    image: consumer-email
+    env_file:
+      - .env
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+    networks:
+      - affiliate
+
+  database:
+    image: arm64v8/mysql:8
+    container_name: database
+    command: ["mysqld", "--mysql-native-password=ON"]
+    volumes:
+      - database-data:/var/lib/mysql
+      - ./affiliate.sql:/docker-entrypoint-initdb.d/dump.sql
+    labels:
+      - "traefik.enable=true"
+      - "traefik.tcp.routers.database.rule=HostSNI(`*`)"
+      - "traefik.tcp.routers.database.entrypoints=mysql"
+      - "traefik.tcp.services.database.loadbalancer.server.port=3306"
+    env_file:
+      - ".env"
+    environment:
+      - MYSQL_DATABASE=${MYSQL_DATABASE}
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+      - MYSQL_USER=${MYSQL_USER}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+    networks:
+      - affiliate
+      
+volumes:
+  database-data:
+
+networks:
+  affiliate:
+    name: affiliate
